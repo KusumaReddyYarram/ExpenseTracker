@@ -15,7 +15,10 @@ const protect = async (req, res, next) => {
 
       if (getIsConnected()) {
         req.user = await User.findById(decoded.id).select('-password');
-      } else {
+      }
+      
+      // Fallback check if user not found in DB
+      if (!req.user) {
         const found = memoryUsers.find(u => u._id === decoded.id || u.id === decoded.id);
         if (found) {
           const { password, ...userWithoutPass } = found;
@@ -30,11 +33,9 @@ const protect = async (req, res, next) => {
       next();
     } catch (error) {
       console.error('Auth middleware error:', error.message);
-      return res.status(401).json({ success: false, message: 'Not authorized, token failed' });
+      return res.status(401).json({ success: false, message: 'Not authorized, token invalid or expired' });
     }
-  }
-
-  if (!token) {
+  } else {
     return res.status(401).json({ success: false, message: 'Not authorized, no token provided' });
   }
 };
