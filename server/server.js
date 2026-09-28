@@ -46,9 +46,13 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`  AURA FINTECH BACKEND RUNNING ON PORT ${PORT} `);
-  console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`====================================================`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`  AURA FINTECH BACKEND RUNNING ON PORT ${PORT} `);
+    console.log(`  Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`====================================================`);
+  });
+}
+
+module.exports = app;
