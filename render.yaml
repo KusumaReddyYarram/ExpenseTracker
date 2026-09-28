@@ -2,7 +2,7 @@ services:
   - type: web
     name: ExpenseTracker
     env: node
-    buildCommand: npm install && cd server && npm install
+    buildCommand: npm install
     startCommand: node server/server.js
     envVars:
       - key: NODE_ENV
