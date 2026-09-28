@@ -3,9 +3,22 @@ const mongoose = require('mongoose');
 let isConnected = false;
 
 const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    isConnected = true;
+    return;
+  }
+
+  const mongoUri = process.env.MONGO_URI;
+
+  if (!mongoUri) {
+    console.warn('MONGO_URI not set. Operating with hybrid memory store mode.');
+    isConnected = false;
+    return;
+  }
+
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/expense_tracker', {
-      serverSelectionTimeoutMS: 3000
+    const conn = await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 4000
     });
     isConnected = true;
     console.log(`MongoDB Connected: ${conn.connection.host}`);

@@ -10,10 +10,7 @@ dotenv.config();
 // Initialize Express app
 const app = express();
 
-// Connect to Database
-connectDB();
-
-// Middleware
+// Middleware: CORS & JSON Body Parsing
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -21,6 +18,16 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Connect to Database per request (ensures serverless resilience)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.warn('Database connect middleware warning:', err.message);
+  }
+  next();
+});
 
 // Health Check API
 app.get('/api/health', (req, res) => {
